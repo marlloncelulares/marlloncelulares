@@ -1,0 +1,34 @@
+.rdrCalendarWrapper {
+    background-color: var(--primary-color);
+  }
+  
+  .rdrDateDisplayWrapper,
+  .rdrDateDisplayItem,
+  .rdrMonthAndYearWrapper,
+  .rdrWeekDay,
+  .rdrDayNumber {
+    color: var(--text-color); /* Use the text color for the calendar text elements */
+  }
+  
+  .rdrSelected,
+  .rdrInRange,
+  .rdrStartEdge,
+  .rdrEndEdge,
+  .rdrDayInPreview {
+    background-color: var(--button-color); /* Highlight color from button-color variable */
+  }
+  
+  .rdrDayToday .rdrDayNumber span:after {
+    background: var(--button-color); /* Today's date circle */
+  }
+  
+  .rdrMonthPicker select,
+  .rdrYearPicker select {
+    color: var(--text-color);
+  }
+  
+  /* Additional styling for input elements inside the date picker if needed */
+  .rdrInputRanges input {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+  }

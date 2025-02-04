@@ -1,18 +1,28 @@
-import type { Config } from "tailwindcss";
+import type { Config } from 'tailwindcss'
 
-export default {
+const config: Config = {
+  darkMode: 'class',
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    './app/**/*.{html,js,ts,jsx,tsx,mdx}',
+    './components/**/*.{html,js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        'dark-blue': '#131D2D',
+        'light-blue': '#1E2F48',
+        'yellow': '#F4AF1B',
+        'gray': '#F1F1F1',
+        'white': '#FFFFFF',
+        'custom-start': '#000000',
+        'custom-end': '#282523',
+      },
+      backgroundImage: {
+        'custom-gradient': 'linear-gradient(to bottom, #000000, #282523)',
       },
     },
   },
   plugins: [],
-} satisfies Config;
+};
+
+export default config;

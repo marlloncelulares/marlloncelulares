@@ -1,0 +1,203 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;800&display=swap');
+
+:root {
+  --primary-color: #FFFFFF;
+  --secondary-color: #F1F1F1;
+  --dark-blue: #131D2D;
+  --light-blue: #1E2F48;
+  --yellow: #F4AF1B;
+  --text-color: #000000;
+  --text-color-two: #ffffff;
+  --secondary-text-color: #212121;
+  --secondary-text-color-two: #282523;
+  --button-color: #ff2400;
+  --button-color-two: #ff7f00;
+  --button-color-three: #feaa11;
+  --button-color-four: #e25200;
+  --button-text-color: #ffffff;
+  --button-text-color-two: #c3c2bf;
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+body {
+  background-color: var(--secondary-color);
+  color: var(--dark-blue);
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+html,
+body,
+:root {
+  height: 100%;
+}
+
+html, body, div, h1, h2, h3, p, ul, li {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+h1 {
+  font-family: 'Sora', sans-serif;
+}
+
+h2 {
+  font-family: 'Sora', sans-serif;
+}
+
+h3 {
+  font-family: 'sora', sans-serif;
+}
+
+p {
+  font-family: 'sora', sans-serif;
+}
+
+span {
+  font-family: 'Sora';
+  font-weight: 600;
+}
+
+a {
+  text-decoration: none;
+}
+
+a.no-underline {
+  text-decoration: none;
+}
+
+button {
+  background-color: var(--primary-color);
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+#bottom-left-toast {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  z-index: 9999;
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.max-w-xl {
+  max-width: 36rem;
+}
+
+.gradient-text {
+  background: linear-gradient(to right, var(--button-color-four), var(--button-color-three));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Estilos globais para o react-calendar */
+.react-calendar {
+  background-color: #000000;
+  color: #000000;
+  border-radius: 8px;
+  padding: 10px;
+  width: 100%;
+  max-width: 350px;
+}
+
+.react-calendar__navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.react-calendar__navigation button {
+  color: #000000;
+  background: none;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.react-calendar__navigation button:disabled {
+  color: #666;
+}
+
+.react-calendar__navigation button:enabled:hover {
+  color: #000000;
+}
+
+.react-calendar__month-view__weekdays {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: #000000;
+}
+
+.react-calendar__month-view__days__day {
+  color: #000000;
+  font-size: 0.875rem;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #000000;
+}
+
+.react-calendar__tile {
+  background: #000000;
+  color: #000000;
+  border-radius: 6px;
+  padding: 10px 0;
+  font-weight: 500;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background-color: #000000;
+  color: #000000;
+}
+
+.react-calendar__tile--now {
+  background-color: #000000;
+  color: #000000;
+  border-radius: 6px;
+}
+
+.react-calendar__tile--active {
+  background-color: #000000;
+  color: #000000;
+  border-radius: 6px;
+}
+
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+  background-color: #000000;
+  color: #000000;
+}
