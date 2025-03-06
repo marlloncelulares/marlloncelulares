@@ -50,7 +50,7 @@ const Quiz: React.FC = () => {
       console.error('Erro:', error);
       alert('Erro ao enviar dados. Tente novamente.');
     }
-  };
+  }
 
   return (
     <div className="w-screen h-screen bg-gray-100 flex items-center justify-center overflow-hidden">
