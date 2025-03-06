@@ -4,10 +4,18 @@ import React, { useState, useEffect } from 'react';
 import { sendConversionEvent } from '@/lib/integrations/meta-conversion';
 import { useRouter } from 'next/navigation';
 
-const QuizQuestion: React.FC = () => { // <- Renomeie aqui para QuizQuestion
+type QuizOption = {
+  label: string;
+};
+
+type QuizQuestionProps = {
+  onComplete: (email: string) => void;
+};
+
+const QuizQuestion: React.FC<QuizQuestionProps> = ({ onComplete }) => {
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({ name: '', email: '', whatsapp: '' });
-  const [answers, setAnswers] = useState<any[]>([]);
+  const [answers, setAnswers] = useState<QuizOption[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -18,8 +26,8 @@ const QuizQuestion: React.FC = () => { // <- Renomeie aqui para QuizQuestion
     });
   }, []);
 
-  const handleOptionClick = (option: any) => {
-    setAnswers([...answers, option.label]);
+  const handleOptionClick = (option: QuizOption) => {
+    setAnswers([...answers, option]);
     setStep(step + 1);
   };
 
@@ -45,12 +53,13 @@ const QuizQuestion: React.FC = () => { // <- Renomeie aqui para QuizQuestion
         },
       });
 
+      onComplete(formData.email); // Adicione isso para chamar corretamente o evento
       router.push('/note-13-pro');
     } catch (error) {
       console.error('Erro:', error);
       alert('Erro ao enviar dados. Tente novamente.');
     }
-  }
+  };
 
   return (
     <div className="w-screen h-screen bg-gray-100 flex items-center justify-center overflow-hidden">
@@ -103,4 +112,4 @@ const QuizQuestion: React.FC = () => { // <- Renomeie aqui para QuizQuestion
   );
 };
 
-export default QuizQuestion; // <-- Corrija aqui também
+export default QuizQuestion;
