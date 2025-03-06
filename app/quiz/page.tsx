@@ -1,7 +1,8 @@
 'use client';
+
 import React, { useEffect } from 'react';
 import { sendConversionEvent } from '@/lib/integrations/meta-conversion';
-import Quiz from '@/components/common/quiz/QuizQuestion';
+import QuizQuestion from '@/components/common/quiz/QuizQuestion';
 
 const QuizPage: React.FC = () => {
   useEffect(() => {
@@ -23,7 +24,7 @@ const QuizPage: React.FC = () => {
 
   return (
     <div className="w-screen h-screen bg-gray-100 flex items-center justify-center overflow-hidden">
-      <Quiz onComplete={handleQuizComplete} />
+      <QuizQuestion onComplete={handleQuizComplete} />
     </div>
   );
 };
