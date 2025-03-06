@@ -1,29 +1,14 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { sendConversionEvent } from '@/lib/integrations/meta-conversion';
 import { useRouter } from 'next/navigation';
 
-interface Option {
-  id: number;
-  label: string;
-  emoji: string;
-}
-
-interface QuizStep {
-  type: 'intro' | 'question' | 'form';
-  content?: React.ReactNode;
-  question?: string;
-  options?: Option[];
-}
-
 const Quiz: React.FC = () => {
   const [step, setStep] = useState(0);
-  const [formData, setFormData] = React.useState({ name: '', email: '', whatsapp: '' });
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [formData, setFormData] = useState({ name: '', email: '', whatsapp: '' });
+  const [answers, setAnswers] = useState<any[]>([]);
   const router = useRouter();
-
-  const steps: QuizStep[] = [
-    // (seus passos originais aqui, mantidos exatamente iguais)
-  ];
 
   useEffect(() => {
     sendConversionEvent({
@@ -33,9 +18,9 @@ const Quiz: React.FC = () => {
     });
   }, []);
 
-  const handleOptionClick = (option: Option) => {
-    setAnswers((prev) => ({ ...prev, [steps[step].question || '']: option.label }));
-    setStep((prev) => prev + 1);
+  const handleOptionClick = (option: any) => {
+    setAnswers([...answers, option.label]);
+    setStep(step + 1);
   };
 
   const handleSubmitForm = async (e: React.FormEvent) => {
@@ -45,13 +30,10 @@ const Quiz: React.FC = () => {
       const response = await fetch('/api/quiz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          answers,
-        }),
+        body: JSON.stringify({ formData, answers }),
       });
 
-      if (!response.ok) throw new Error('Erro ao enviar o formulário do quiz.');
+      if (!response.ok) throw new Error('Erro ao enviar formulário.');
 
       await sendConversionEvent({
         event_name: 'Lead',
@@ -63,57 +45,60 @@ const Quiz: React.FC = () => {
         },
       });
 
-      router.push('/');
+      router.push('/note-13-pro');
     } catch (error) {
-      console.error(error);
-      alert('Erro ao enviar dados. Tente novamente mais tarde.');
+      console.error('Erro:', error);
+      alert('Erro ao enviar dados. Tente novamente.');
     }
   };
 
   return (
-    <div className="w-screen h-screen bg-gray-100 flex flex-col justify-start relative">
-      <div className="flex flex-1 items-center justify-center">
-        {steps[step].type === 'intro' || steps[step].type === 'form' ? (
-          <div className="p-4 w-full">
-            {steps[step].type === 'form' ? (
-              <form onSubmit={(e) => { e.preventDefault(); handleSubmitForm(); }}>
-                <input
-                  type="text"
-                  placeholder="Nome"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                />
-                <input
-                  type="email"
-                  placeholder="E-mail"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="WhatsApp"
-                  value={formData.whatsapp}
-                  onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                  required
-                />
-                <button type="submit">
-                  Enviar
-                </button>
-              </form>
-            ) : (
-              steps[step].type === 'intro' ? (
-                <>{steps[step].content}</>
-              ) : (
-                steps[step].options?.map((option) => (
-                  <button key={option.id} onClick={() => handleOptionClick(option)}>
-                    {option.label}
-                  </button>
-                ))
-              )
-            )}
+    <div className="w-screen h-screen bg-gray-100 flex items-center justify-center overflow-hidden">
+      {step === 0 && (
+        <div className="max-w-sm w-full mx-auto bg-white p-6 rounded-lg shadow-md text-center">
+          <h2>🎉 Você foi selecionado(a) para participar do nosso Questionário!</h2>
+          <button onClick={() => setStep(step + 1)}>Continuar</button>
         </div>
+      )}
+
+      {step === 1 && (
+        <div className="max-w-sm bg-white p-6 rounded-lg shadow-md text-center">
+          <h2>Qual é o modelo do seu celular atual?</h2>
+          <button onClick={() => handleOptionClick({ label: 'iPhone' })}>iPhone 📱</button>
+          <button onClick={() => handleOptionClick({ label: 'Samsung' })}>Samsung</button>
+          <button onClick={() => handleOptionClick({ label: 'Motorola' })}>Motorola</button>
+          <button onClick={() => handleOptionClick({ label: 'Outro' })}>Outro</button>
+        </div>
+      )}
+
+      {step === 2 && (
+        <div className="max-w-sm mx-auto">
+          <form onSubmit={handleSubmitForm}>
+            <input
+              type="text"
+              placeholder="Nome"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              required
+            />
+            <input
+              type="email"
+              placeholder="E-mail"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              required
+            />
+            <input
+              type="tel"
+              placeholder="WhatsApp"
+              value={formData.whatsapp}
+              onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+              required
+            />
+            <button type="submit">Enviar</button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
