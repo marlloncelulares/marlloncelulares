@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { sendConversionEvent } from '@/lib/integrations/meta-conversion';
 import { useRouter } from 'next/navigation';
 
-const Quiz: React.FC = () => {
+const QuizQuestion: React.FC = () => { // <- Renomeie aqui para QuizQuestion
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({ name: '', email: '', whatsapp: '' });
   const [answers, setAnswers] = useState<any[]>([]);
@@ -103,4 +103,4 @@ const Quiz: React.FC = () => {
   );
 };
 
-export default Quiz;
+export default QuizQuestion; // <-- Corrija aqui também
