@@ -1,24 +1,10 @@
-import { Sora } from 'next/font/google';
-import Script from 'next/script';
-import Image from 'next/image';
-
-import '@/styles/globals.css';
-
-export const metadata = {
-  title: 'Marllon Celulares',
-};
-
-const font = Sora({
-  subsets: ['latin'],
-});
+const facebookPixelId = "613504194811333"; // Definindo ID fixo para garantir carregamento correto
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const facebookPixelId = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
-
   return (
     <html lang="en">
       <head>
@@ -43,22 +29,10 @@ export default function RootLayout({
                 `,
               }}
             />
-            {/* Fallback para navegadores com JavaScript desativado */}
-            <noscript>
-              <Image
-                height={1}
-                width={1}
-                style={{ display: 'none' }}
-                src={`https://www.facebook.com/tr?id=${facebookPixelId}&ev=PageView&noscript=1`}
-                alt=""
-              />
-            </noscript>
           </>
         )}
       </head>
-      <body className={`${font.className} flex flex-col min-h-screen`}>
-            {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
