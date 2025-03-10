@@ -19,7 +19,6 @@ interface QuizStep {
 const Quiz: React.FC = () => {
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({ name: '', email: '', whatsapp: '' });
-  const [answers, setAnswers] = useState<{ question: string; option: string }[]>([]);
   const router = useRouter();
 
   const steps: QuizStep[] = [
