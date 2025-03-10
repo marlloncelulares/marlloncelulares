@@ -1,5 +1,5 @@
 import Script from 'next/script';
-import './globals.css'; // 👈 Adicione isso exatamente aqui!
+import '../styles/globals.css'; // 👈 Adicione isso exatamente aqui!
 
 const facebookPixelId = "613504194811333";
 
