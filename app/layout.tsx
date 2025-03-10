@@ -1,4 +1,6 @@
-const facebookPixelId = "613504194811333"; // Definindo ID fixo para garantir carregamento correto
+import Script from 'next/script';
+
+const facebookPixelId = "613504194811333"; // ID fixo definido corretamente
 
 export default function RootLayout({
   children,
