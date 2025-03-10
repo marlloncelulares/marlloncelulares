@@ -2,13 +2,22 @@ import nodemailer from 'nodemailer';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
+  const headers = new Headers();
+  headers.set('Access-Control-Allow-Origin', '*');
+
   try {
     const { name, email, whatsapp } = await request.json();
 
-    if (!name || !email || !whatsapp) {
-      return NextResponse.json({ message: 'Campos obrigatórios ausentes.' }, { status: 400 });
+    // Validação robusta
+    const whatsappRegex = /^\+[1-9]\d{1,14}$/;
+    if (!whatsappRegex.test(whatsapp)) {
+      return NextResponse.json(
+        { message: 'Formato de WhatsApp inválido. Use +DDI...' },
+        { status: 400, headers }
+      );
     }
 
+    // Configuração SMTP
     const transporter = nodemailer.createTransport({
       host: 'smtp.titan.email',
       port: 465,
@@ -19,38 +28,42 @@ export async function POST(request: Request) {
       },
     });
 
-    const mailOptionsLead = {
-      from: process.env.EMAIL_USER,
+    // E-mails
+    await transporter.sendMail({
+      from: `"Marllon Celulares" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: 'Obrigado por participar! 🎉',
+      subject: '🎁 Brinde Confirmado!',
       html: `
-        <h1>Olá, ${name}!</h1>
-        <p>Obrigado por participar do nosso questionário!</p>
-        <p>🎁 Seu brinde exclusivo já está garantido, venha até nossa loja retirá-lo!</p>
-        <p>Equipe Marllon Celulares</p>
-      `,
-    };
+        <h1>Olá ${name}!</h1>
+        <p>Seu brinde está reservado! Apresente este e-mail em nossa loja:</p>
+        <p><strong>Local:</strong> [ENDEREÇO DA LOJA]</p>
+      `
+    });
 
-    const mailOptionsAdmin = {
-      from: process.env.EMAIL_USER,
+    await transporter.sendMail({
+      from: `"Marllon Celulares" <${process.env.EMAIL_USER}>`,
       to: 'comercial@marlloncelulares.com',
-      subject: 'Novo Lead do Quiz',
+      subject: '🔥 Novo Lead do Quiz',
       html: `
-        <h2>Novo lead capturado no Quiz!</h2>
+        <h3>Novo participante:</h3>
         <ul>
-          <li><strong>Nome:</strong> ${name}</li>
-          <li><strong>Email:</strong> ${email}</li>
-          <li><strong>WhatsApp:</strong> ${whatsapp}</li>
+          <li>Nome: ${name}</li>
+          <li>E-mail: ${email}</li>
+          <li>WhatsApp: ${whatsapp}</li>
         </ul>
-      `,
-    };
+      `
+    });
 
-    await transporter.sendMail(mailOptionsLead);
-    await transporter.sendMail(mailOptionsAdmin);
+    return NextResponse.json(
+      { message: 'E-mails enviados!' }, 
+      { status: 200, headers }
+    );
 
-    return NextResponse.json({ message: 'Emails enviados com sucesso!' }, { status: 200 });
   } catch (error) {
-    console.error('Erro envio quiz:', error);
-    return NextResponse.json({ message: 'Erro interno do servidor.' }, { status: 500 });
+    console.error('Erro no quiz:', error);
+    return NextResponse.json(
+      { message: 'Erro interno' }, 
+      { status: 500, headers }
+    );
   }
 }
