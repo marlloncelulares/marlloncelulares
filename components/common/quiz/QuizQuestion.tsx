@@ -1,50 +1,40 @@
-'use client';
+onSubmit={async (e) => {
+  e.preventDefault();
+  try {
+    const response = await fetch('/api/quiz', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: formData.name,
+        email: formData.email,
+        whatsapp: formData.whatsapp,
+        answers,
+      }),
+    });
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+    if (response.ok) {
+      await fetch('/api/meta-events', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event_name: 'CompleteRegistration',
+          event_time: Math.floor(Date.now() / 1000),
+          user_data: {
+            lead_name: formData.name,
+            lead_email: formData.email,
+            lead_whatsapp: formData.whatsapp,
+          },
+          custom_data: { content_name: 'Quiz' },
+        }),
+      });
 
-const sendEvent = async (event_name: string, email?: string) => {
-  await fetch('/api/meta-events', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ event_name, user_data: { email } }),
-  });
-};
-
-const Quiz: React.FC = () => {
-  const [step, setStep] = useState(0);
-  const [email, setEmail] = useState('');
-  const router = useRouter();
-
-  useEffect(() => {
-    sendEvent('PageView');
-  }, []);
-
-  const handleComplete = () => {
-    sendEvent('Lead', email);
-    router.push('/note-13-pro');
-  };
-
-  return (
-    <div>
-      {step === 0 ? (
-        <div>
-          <h2>Bem-vindo ao Quiz!</h2>
-          <button onClick={() => setStep(1)}>Começar</button>
-        </div>
-      ) : (
-        <div>
-          <input
-            type="email"
-            placeholder="Digite seu email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <button onClick={handleComplete}>Finalizar</button>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default Quiz;
+      alert('Obrigado por participar! Verifique seu e-mail.');
+      localStorage.removeItem('quizFormData');
+      router.push('/note-13-pro');
+    } else {
+      alert('Erro ao enviar os dados. Tente novamente mais tarde.');
+    }
+  } catch (error) {
+    alert('Erro ao enviar os dados. Tente novamente mais tarde.');
+  }
+}};
