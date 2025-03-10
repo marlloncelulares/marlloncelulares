@@ -1,6 +1,7 @@
 import Script from 'next/script';
+import './globals.css'; // 👈 Adicione isso exatamente aqui!
 
-const facebookPixelId = "613504194811333"; // ID fixo definido corretamente
+const facebookPixelId = "613504194811333";
 
 export default function RootLayout({
   children,
@@ -12,7 +13,6 @@ export default function RootLayout({
       <head>
         {facebookPixelId && (
           <>
-            {/* Script do Meta Pixel */}
             <Script
               id="meta-pixel"
               strategy="afterInteractive"
