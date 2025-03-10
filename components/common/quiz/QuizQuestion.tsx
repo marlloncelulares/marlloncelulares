@@ -19,7 +19,16 @@ interface QuizStep {
 const Quiz: React.FC = () => {
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({ name: '', email: '', whatsapp: '' });
+  const [answers, setAnswers] = useState<{ question: string; option: string }[]>([]);
   const router = useRouter();
+
+  const handleOptionClick = (selectedOption: Option) => {
+    const currentQuestion = steps[step].question;
+    if (currentQuestion) {
+      setAnswers((prev) => [...prev, { question: currentQuestion, option: selectedOption.label }]);
+    }
+    setStep((prev) => prev + 1);
+  };
 
   const steps: QuizStep[] = [
     {
@@ -30,10 +39,10 @@ const Quiz: React.FC = () => {
             🎉 Você foi selecionado(a) para participar do nosso Questionário de Satisfação!
           </h2>
           <p className="text-gray-700 mb-6">
-            Como forma de agradecimento, você receberá um <strong>brinde exclusivo</strong> da loja após responder algumas perguntas simples.
+            Como forma de agradecimento, você receberá um <strong>brinde exclusivo</strong> após responder algumas perguntas simples.
           </p>
           <button
-            onClick={() => setStep(step + 1)}
+            onClick={() => setStep(1)}
             className="mt-6 w-full bg-dark-blue text-white font-bold py-3 rounded-lg transition hover:bg-blue-950"
           >
             Continuar
@@ -45,7 +54,9 @@ const Quiz: React.FC = () => {
       type: 'form',
       content: (
         <div className="max-w-sm w-full mx-auto bg-white p-6 rounded-lg shadow-md text-center">
-          <h2 className="text-lg font-bold text-gray-800 mb-6">🎁 Parabéns! Você concluiu o questionário.</h2>
+          <h2 className="text-lg font-bold text-gray-800 mb-6">
+            🎁 Parabéns! Você concluiu o questionário.
+          </h2>
           <form
             onSubmit={async (e) => {
               e.preventDefault();
@@ -53,7 +64,7 @@ const Quiz: React.FC = () => {
                 const response = await fetch('/api/quiz', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(formData),
+                  body: JSON.stringify({ ...formData, answers }),
                 });
 
                 if (response.ok) {
@@ -83,9 +94,30 @@ const Quiz: React.FC = () => {
               }
             }}
           >
-            <input placeholder="Nome" required />
-            <input placeholder="E-mail" type="email" required />
-            <input placeholder="WhatsApp" type="tel" required />
+            <input
+              type="text"
+              placeholder="Nome"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full mb-4 p-2 border border-gray-300 rounded"
+              required
+            />
+            <input
+              type="email"
+              placeholder="E-mail"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full mb-4 p-2 border border-gray-300 rounded"
+              required
+            />
+            <input
+              type="tel"
+              placeholder="WhatsApp"
+              value={formData.whatsapp}
+              onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+              className="w-full mb-4 p-2 border border-gray-300 rounded"
+              required
+            />
             <button
               type="submit"
               className="mt-6 w-full bg-dark-blue text-white font-bold py-3 rounded-lg transition hover:bg-blue-950"
