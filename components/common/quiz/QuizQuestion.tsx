@@ -18,21 +18,9 @@ interface QuizStep {
 
 const Quiz: React.FC = () => {
   const [step, setStep] = useState(0);
-  const [showProgressBar, setShowProgressBar] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', whatsapp: '' });
   const [answers, setAnswers] = useState<{ question: string; option: string }[]>([]);
   const router = useRouter();
-
-  useEffect(() => {
-    const savedFormData = localStorage.getItem('quizFormData');
-    if (savedFormData) {
-      setFormData(JSON.parse(savedFormData));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('quizFormData', JSON.stringify(formData));
-  }, [formData]);
 
   const steps: QuizStep[] = [
     {
@@ -46,10 +34,7 @@ const Quiz: React.FC = () => {
             Como forma de agradecimento, você receberá um <strong>brinde exclusivo</strong> da loja após responder algumas perguntas simples.
           </p>
           <button
-            onClick={() => {
-              setStep(step + 1);
-              setShowProgressBar(true);
-            }}
+            onClick={() => setStep(step + 1)}
             className="mt-6 w-full bg-dark-blue text-white font-bold py-3 rounded-lg transition hover:bg-blue-950"
           >
             Continuar
@@ -57,7 +42,7 @@ const Quiz: React.FC = () => {
         </div>
       ),
     },
-    // Insira aqui suas perguntas originais do quiz...
+    // Adicione as perguntas originais aqui...
     {
       type: 'form',
       content: (
@@ -101,6 +86,7 @@ const Quiz: React.FC = () => {
                   alert('Erro ao enviar os dados. Tente novamente mais tarde.');
                 }
               } catch (error) {
+                console.error('Erro ao enviar os dados:', error);
                 alert('Erro ao enviar os dados. Tente novamente mais tarde.');
               }
             }}
@@ -141,24 +127,7 @@ const Quiz: React.FC = () => {
     },
   ];
 
-  const handleOptionClick = (selectedOption: Option) => {
-    const currentQuestion = steps[step].question;
-    if (currentQuestion) {
-      setAnswers((prevAnswers) => [...prevAnswers, { question: currentQuestion, option: selectedOption.label }]);
-    }
-    setStep(step + 1);
-  };
-
-  return (
-    <div className="w-screen h-screen bg-gray-100 flex flex-col justify-start relative">
-      {steps[step].type === 'intro' || steps[step].type === 'form' ? (
-        <div className="p-4 w-full">{steps[step].content}</div>
-      ) : (
-        // Renderizar perguntas...
-        <></>
-      )}
-    </div>
-  );
+  return <div className="w-screen h-screen bg-gray-100 flex items-center justify-center overflow-hidden">{steps[step].content}</div>;
 };
 
 export default Quiz;
