@@ -7,22 +7,22 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id                   Int            @id @default(autoincrement())
-  email                String         @unique
-  password             String
-  name                 String
-  role                 Role           @default(USER)
-  createdAt            DateTime       @default(now())
-  updatedAt            DateTime       @updatedAt
-  passwordResetToken   String?
-  passwordResetExpires DateTime?
+model Schedule {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  whatsapp  String
+  date      DateTime
+  time      String
+  createdAt DateTime @default(now())
 }
 
-enum Role {
-  USER
-  ADMIN
-  SUPERADMIN
-  EMPLOYEE
-  CUSTOMER
+model QuizLead {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  whatsapp  String
+  createdAt DateTime @default(now())
 }
+
+// Mantenha os outros modelos existentes...
