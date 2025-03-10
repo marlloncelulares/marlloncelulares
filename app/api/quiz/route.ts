@@ -19,15 +19,12 @@ export async function POST(request: Request) {
       },
     });
 
-    // Formatar respostas
     const formattedAnswers = answers
       .map(
         (answer: { question: string; option: string }) =>
           `<li><strong>${answer.question}:</strong> ${answer.option}</li>`
-      )
-      .join('');
+      ).join('');
 
-    // E-mail para o lead
     const mailOptionsLead = {
       from: process.env.EMAIL_USER,
       to: email,
@@ -36,16 +33,15 @@ export async function POST(request: Request) {
         <h1>Olá, ${name}!</h1>
         <p>Obrigado por participar do nosso questionário de satisfação.</p>
         <h3>🎁 Seu brinde exclusivo está garantido!</h3>
-        <p>Por favor, visite uma das nossas lojas para retirar seu brinde. Não se esqueça de mencionar que participou do questionário.</p>
-        <p>Atenciosamente,<br>Equipe Claudinho Celulares</p>
+        <p>Visite nossa loja para retirá-lo.</p>
+        <p>Equipe Claudinho Celulares</p>
       `,
     };
 
-    // E-mail para o administrador
     const mailOptionsAdmin = {
       from: process.env.EMAIL_USER,
       to: 'agendamentos@claudinhocelulares.com.br',
-      subject: 'Novo lead do questionário de satisfação! 🎉',
+      subject: 'Novo lead do questionário de satisfação!',
       html: `
         <h1>Detalhes do Lead:</h1>
         <ul>
@@ -53,21 +49,17 @@ export async function POST(request: Request) {
           <li><strong>E-mail:</strong> ${email}</li>
           <li><strong>WhatsApp:</strong> ${whatsapp}</li>
         </ul>
-        <h2>Respostas do Questionário:</h2>
+        <h2>Respostas:</h2>
         <ul>${formattedAnswers}</ul>
-        <p>Por favor, entre em contato para fortalecer o relacionamento com o cliente.</p>
       `,
     };
 
-    // Enviar os e-mails
-    await Promise.all([
-      transporter.sendMail(mailOptionsLead),
-      transporter.sendMail(mailOptionsAdmin),
-    ]);
+    await transporter.sendMail(mailOptionsLead);
+    await transporter.sendMail(mailOptionsAdmin);
 
-    return NextResponse.json({ message: 'E-mails enviados com sucesso!' }, { status: 200 });
+    return NextResponse.json({ message: 'E-mails enviados!' }, { status: 200 });
   } catch (error) {
-    console.error('Erro ao enviar os e-mails:', error);
-    return NextResponse.json({ message: 'Erro ao enviar os e-mails.' }, { status: 500 });
+    console.error('Erro no envio dos e-mails:', error);
+    return NextResponse.json({ message: 'Erro ao enviar e-mails.' }, { status: 500 });
   }
 }
