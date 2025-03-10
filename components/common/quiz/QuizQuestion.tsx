@@ -55,7 +55,7 @@ const Quiz: React.FC = () => {
                 const response = await fetch('/api/quiz', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(answers),
+                  body: JSON.stringify(formData),
                 });
 
                 if (response.ok) {
