@@ -8,7 +8,6 @@ export async function POST(request: Request) {
   try {
     const { name, email, whatsapp } = await request.json();
 
-    // Validação robusta
     const whatsappRegex = /^\+[1-9]\d{1,14}$/;
     if (!whatsappRegex.test(whatsapp)) {
       return NextResponse.json(
@@ -17,7 +16,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Configuração SMTP
     const transporter = nodemailer.createTransport({
       host: 'smtp.titan.email',
       port: 465,
@@ -28,7 +26,6 @@ export async function POST(request: Request) {
       },
     });
 
-    // E-mails
     await transporter.sendMail({
       from: `"Marllon Celulares" <${process.env.EMAIL_USER}>`,
       to: email,
