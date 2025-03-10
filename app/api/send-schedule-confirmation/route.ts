@@ -8,7 +8,6 @@ export async function POST(request: Request) {
   try {
     const { name, email, date, time, whatsapp } = await request.json();
 
-    // Validação básica
     if (!name || !email || !date || !time || !whatsapp) {
       return NextResponse.json(
         { message: 'Campos obrigatórios ausentes.' }, 
@@ -16,7 +15,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // Configuração SMTP
     const transporter = nodemailer.createTransport({
       host: 'smtp.titan.email',
       port: 465,
@@ -27,7 +25,6 @@ export async function POST(request: Request) {
       },
     });
 
-    // E-mail para o cliente
     const mailOptionsLead = {
       from: `"Marllon Celulares" <${process.env.EMAIL_USER}>`,
       to: email,
@@ -45,7 +42,6 @@ export async function POST(request: Request) {
       `
     };
 
-    // E-mail para administração
     const mailOptionsAdmin = {
       from: `"Marllon Celulares" <${process.env.EMAIL_USER}>`,
       to: 'comercial@marlloncelulares.com',
