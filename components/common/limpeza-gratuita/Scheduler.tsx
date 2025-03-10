@@ -1,131 +1,150 @@
 import React, { useState } from 'react';
-import Calendar, { CalendarProps } from 'react-calendar';
+import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useRouter } from 'next/navigation';
 
-const Scheduler: React.FC = () => {
+type ValuePiece = Date | null;
+type Value = ValuePiece | [ValuePiece, ValuePiece];
+
+const Scheduler = () => {
   const [step, setStep] = useState(1);
-  const [date, setDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [name, setName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [whatsapp, setWhatsapp] = useState<string>('');
+  const [date, setDate] = useState<Value>(null);
+  const [selectedTime, setSelectedTime] = useState<string>('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleDateChange: CalendarProps['onChange'] = (value) => {
-    if (Array.isArray(value)) {
-      setDate(value[0]);
-    } else {
-      setDate(value);
-    }
-  };
+  const times = [
+    '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
+    '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'
+  ];
 
   const sendMetaEvent = async () => {
-    const payload = {
-      event_name: 'Schedule',
-      event_time: Math.floor(Date.now() / 1000),
-      user_data: {
-        lead_name: name,
-        lead_email: email,
-        lead_whatsapp: whatsapp,
-      },
-      custom_data: {
-        content_name: 'Limpeza Gratuita',
-        content_category: 'Serviços',
-        appointment_date: date?.toISOString().split('T')[0],
-        appointment_time: selectedTime,
-      },
-    };
-
     try {
       await fetch('/api/meta-events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          event_name: 'Schedule',
+          event_time: Math.floor(Date.now() / 1000),
+          user_data: { lead_name: name, lead_email: email, lead_whatsapp: whatsapp },
+          custom_data: { 
+            content_name: 'Limpeza Gratuita',
+            appointment_date: date instanceof Date ? date.toISOString().split('T')[0] : '',
+            appointment_time: selectedTime
+          }
+        })
       });
-      console.log('Evento Schedule enviado com sucesso!');
     } catch (error) {
-      console.error('Erro ao enviar evento Schedule:', error);
-    }
-  };
-
-  const sendScheduleConfirmation = async () => {
-    const payload = {
-      name,
-      email,
-      date: date?.toISOString().split('T')[0],
-      time: selectedTime,
-      whatsapp,
-    };
-
-    const response = await fetch('/api/send-schedule-confirmation', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      throw new Error('Erro ao enviar confirmação.');
+      console.error('Erro no evento do Facebook:', error);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!date || !selectedTime || !name || !email || !whatsapp) {
+      alert('Preencha todos os campos!');
+      return;
+    }
 
-    if (date && selectedTime && name && email && whatsapp) {
-      setIsLoading(true);
+    setIsLoading(true);
 
-      await sendScheduleConfirmation();
-      await sendMetaEvent();  // Chamada correta aqui!
+    try {
+      // Enviar confirmação
+      const response = await fetch('/api/send-schedule-confirmation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          date: date instanceof Date ? date.toISOString().split('T')[0] : '',
+          time: selectedTime,
+          whatsapp
+        })
+      });
 
+      if (!response.ok) throw new Error('Erro no agendamento');
+
+      // Enviar evento para Meta
+      await sendMetaEvent();
+
+      router.push('/agendamento-sucesso');
+
+    } catch (error) {
+      console.error(error);
+      alert('Erro ao agendar. Tente novamente.');
+    } finally {
       setIsLoading(false);
-      router.push('/');
-    } else {
-      alert('Por favor, preencha todos os campos.');
     }
   };
 
-  const times = [
-    '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
-    '13:00', '14:00', '15:00', '16:00', '17:00', '18:00',
-  ];
-
   return (
-    <div className="bg-black flex flex-col items-center space-y-6 my-8 w-full px-4">
+    <div className="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
       {step === 1 && (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (date && selectedTime) {
-              setStep(2);
-            } else {
-              alert('Por favor, selecione uma data e horário.');
-            }
-          }}
-          className="flex flex-col items-center space-y-6"
-        >
-          <h2 className="text-white font-bold text-2xl md:text-3xl text-center mb-8">
-            Selecione Data e Hora Aqui
-          </h2>
-          <Calendar onChange={handleDateChange} value={date} locale="pt-BR" className="react-calendar" />
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Escolha Data e Hora</h2>
+          <Calendar 
+            onChange={(value) => setDate(value)} 
+            value={date} 
+            minDate={new Date()}
+            locale="pt-BR"
+          />
+          
+          <div className="grid grid-cols-3 gap-2 mt-4">
             {times.map((time) => (
-              <button key={time} onClick={() => setSelectedTime(time)}>
+              <button
+                key={time}
+                onClick={() => setSelectedTime(time)}
+                className={`p-2 rounded ${selectedTime === time ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+              >
                 {time}
               </button>
             ))}
           </div>
-          <button type="submit">Próximo</button>
-        </form>
+
+          <button
+            onClick={() => setStep(2)}
+            className="mt-4 w-full bg-green-500 text-white p-2 rounded hover:bg-green-600"
+          >
+            Próximo
+          </button>
+        </div>
       )}
 
       {step === 2 && (
-        <form onSubmit={handleSubmit}>
-          <input placeholder="Nome" value={name} onChange={(e) => setName(e.target.value)} required />
-          <input placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <input placeholder="WhatsApp" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} required />
-          <button type="submit" disabled={isLoading}>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            type="text"
+            placeholder="Nome Completo"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full p-2 border rounded"
+            required
+          />
+          <input
+            type="email"
+            placeholder="E-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-2 border rounded"
+            required
+          />
+          <input
+            type="tel"
+            placeholder="WhatsApp (com DDI)"
+            value={whatsapp}
+            onChange={(e) => setWhatsapp(e.target.value)}
+            className="w-full p-2 border rounded"
+            pattern="^\+[0-9]{11,15}"
+            required
+          />
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
+          >
             {isLoading ? 'Enviando...' : 'Confirmar Agendamento'}
           </button>
         </form>
