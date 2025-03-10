@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-const PIXEL_ID = "613504194811333";
-const ACCESS_TOKEN = "EAAiVod5ZBBlgBOyz8tIqEemtltezKakQ47Ani09mbMptyMy8WMrunyuWOcTjZBt8OzbMHJbjBT9ZAZBZB6afIWjGNNXZAUjHjcR6g9DZA4zmr0wJ8Me6oApg4vsskZB4zBWOWEfFuWjhLjvZCib2WiNbIz7LJ2gTDRNtKUb4bzq0ULPVqTaSZBD7pKAmLZCLkDEzCclvwZDZD";
+const PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
+const ACCESS_TOKEN = process.env.FACEBOOK_ACCESS_TOKEN;
 
 export async function POST(request: Request) {
   try {
