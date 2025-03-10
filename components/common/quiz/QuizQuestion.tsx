@@ -22,14 +22,6 @@ const Quiz: React.FC = () => {
   const [answers, setAnswers] = useState<{ question: string; option: string }[]>([]);
   const router = useRouter();
 
-  const handleOptionClick = (selectedOption: Option) => {
-    const currentQuestion = steps[step].question;
-    if (currentQuestion) {
-      setAnswers((prev) => [...prev, { question: currentQuestion, option: selectedOption.label }]);
-    }
-    setStep((prev) => prev + 1);
-  };
-
   const steps: QuizStep[] = [
     {
       type: 'intro',
