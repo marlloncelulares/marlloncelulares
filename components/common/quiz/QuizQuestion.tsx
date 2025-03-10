@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface Option {
@@ -19,7 +19,6 @@ interface QuizStep {
 const Quiz: React.FC = () => {
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({ name: '', email: '', whatsapp: '' });
-  const [answers, setAnswers] = useState<{ question: string; option: string }[]>([]);
   const router = useRouter();
 
   const steps: QuizStep[] = [
@@ -42,7 +41,6 @@ const Quiz: React.FC = () => {
         </div>
       ),
     },
-    // Adicione as perguntas originais aqui...
     {
       type: 'form',
       content: (
@@ -55,12 +53,7 @@ const Quiz: React.FC = () => {
                 const response = await fetch('/api/quiz', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    name: formData.name,
-                    email: formData.email,
-                    whatsapp: formData.whatsapp,
-                    answers,
-                  }),
+                  body: JSON.stringify(formData),
                 });
 
                 if (response.ok) {
@@ -80,7 +73,6 @@ const Quiz: React.FC = () => {
                   });
 
                   alert('Obrigado por participar! Verifique seu e-mail.');
-                  localStorage.removeItem('quizFormData');
                   router.push('/note-13-pro');
                 } else {
                   alert('Erro ao enviar os dados. Tente novamente mais tarde.');
@@ -91,30 +83,9 @@ const Quiz: React.FC = () => {
               }
             }}
           >
-            <input
-              type="text"
-              placeholder="Nome"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full mb-4 p-2 border border-gray-300 rounded"
-              required
-            />
-            <input
-              type="email"
-              placeholder="E-mail"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full mb-4 p-2 border border-gray-300 rounded"
-              required
-            />
-            <input
-              type="tel"
-              placeholder="WhatsApp"
-              value={formData.whatsapp}
-              onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-              className="w-full mb-4 p-2 border border-gray-300 rounded"
-              required
-            />
+            <input placeholder="Nome" required />
+            <input placeholder="E-mail" type="email" required />
+            <input placeholder="WhatsApp" type="tel" required />
             <button
               type="submit"
               className="mt-6 w-full bg-dark-blue text-white font-bold py-3 rounded-lg transition hover:bg-blue-950"
@@ -127,7 +98,11 @@ const Quiz: React.FC = () => {
     },
   ];
 
-  return <div className="w-screen h-screen bg-gray-100 flex items-center justify-center overflow-hidden">{steps[step].content}</div>;
+  return (
+    <div className="w-screen h-screen bg-gray-100 flex items-center justify-center overflow-hidden">
+      {steps[step].content}
+    </div>
+  );
 };
 
 export default Quiz;
