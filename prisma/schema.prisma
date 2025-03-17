@@ -7,22 +7,50 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Schedule {
-  id        String   @id @default(uuid())
+model User {
+  id                   Int            @id @default(autoincrement())
+  email                String         @unique
+  password             String
+  name                 String
+  role                 Role           @default(USER)
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  passwordResetToken   String?
+  passwordResetExpires DateTime?
+}
+
+model QuizLead {
+  id         Int         @id @default(autoincrement())
+  name       String
+  email      String
+  whatsapp   String
+  createdAt  DateTime    @default(now())
+  answers    QuizAnswer[]
+}
+
+model QuizAnswer {
+  id        Int      @id @default(autoincrement())
+  leadId    Int
+  lead      QuizLead @relation(fields: [leadId], references: [id])
+  question  String
+  answer    String
+  createdAt DateTime @default(now())
+}
+
+model Appointment {
+  id        Int      @id @default(autoincrement())
   name      String
   email     String
   whatsapp  String
-  date      DateTime
+  date      String
   time      String
   createdAt DateTime @default(now())
 }
 
-model QuizLead {
-  id        String   @id @default(uuid())
-  name      String
-  email     String
-  whatsapp  String
-  createdAt DateTime @default(now())
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+  EMPLOYEE
+  CUSTOMER
 }
-
-// Mantenha os outros modelos existentes...
