@@ -9,6 +9,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'Todos os campos são obrigatórios.' }, { status: 400 });
     }
 
+    // Configuração do transporte Nodemailer com Titan Mail
     const transporter = nodemailer.createTransport({
       host: 'smtp.titan.email',
       port: 465,
@@ -19,6 +20,7 @@ export async function POST(request: Request) {
       },
     });
 
+    // Conteúdo do e-mail para o lead
     const mailOptionsLead = {
       from: process.env.EMAIL_USER,
       to: email,
@@ -30,21 +32,29 @@ export async function POST(request: Request) {
         </p>
         <h2 style="color: #D32F2F;">CUPOM: #CLAUDINHOBLACK</h2>
         <strong>Por que o Redmi Note 13 Pro é a escolha perfeita para você:</strong>
-        <ul>
-          <li>📸 <strong>Fotos Incríveis:</strong> Capture momentos inesquecíveis com uma câmera de alta resolução.</li>
-          <li>⚡ <strong>Desempenho Ultra-Rápido:</strong> Processador potente para tarefas e jogos.</li>
-          <li>🔋 <strong>Bateria Duradoura:</strong> Use o dia inteiro sem preocupar com recarga.</li>
-          <li>💎 <strong>Design Premium:</strong> Elegante e funcional, combina estilo e praticidade.</li>
-          <li>🛡️ <strong>Proteção e Garantia:</strong> Suporte e qualidade garantida.</li>
-        </ul>
-        <p>Use o <strong>cupom exclusivo</strong> abaixo para garantir o desconto. Corra, é por tempo limitado!</p>
-        <h2 style="color: #D32F2F;">CUPOM: #CLAUDINHOBLACK</h2>
-        <p>👇 <a href="https://wa.me/5567981117396?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20a%20oferta%20do%20Redmi%20Note%2013%20Pro!">Clique aqui</a> e fale com nossa equipe.</p>
-        <p>Qualquer dúvida, estamos aqui para ajudar!</p>
+          </p>
+          <ul>
+            <li>📸 <strong>Fotos Incríveis:</strong> Capture momentos inesquecíveis com uma câmera de alta resolução que eleva suas selfies e vídeos a um novo patamar.</li>
+            <li>⚡ <strong>Desempenho Ultra-Rápido:</strong> Um processador potente que garante velocidade e fluidez para suas tarefas e jogos favoritos.</li>
+            <li>🔋 <strong>Bateria Duradoura:</strong> Use o dia inteiro sem se preocupar com recarga, graças à tecnologia de longa duração.</li>
+            <li>💎 <strong>Design Premium:</strong> Elegante e moderno, o Redmi Note 13 Pro combina estilo e funcionalidade em um só aparelho.</li>
+            <li>🛡️ <strong>Proteção e Garantia:</strong> Adquira com confiança, sabendo que você conta com suporte e qualidade garantida.</li>
+          </ul>
+          <p>
+            Use o <strong>cupom exclusivo</strong> abaixo para garantir o seu desconto e desfrutar de todos esses benefícios. Mas corra, porque esta oferta é por tempo limitado! 
+          </p>
+          <h2 style="color: #D32F2F;">CUPOM: #CLAUDINHOBLACK</h2>
+          <p>
+            👇 <a href="https://wa.me/5567981117396?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20a%20oferta%20do%20Redmi%20Note%2013%20Pro!">Clique aqui</a> e fale diretamente com nossa equipe para garantir o seu!
+          </p>
+        <p>
+          Qualquer dúvida, estamos aqui para ajudar!
+        </p>
         <p>Atenciosamente,<br>Time de marketing — Claudinho Celulares</p>
       `,
     };
 
+    // Conteúdo do e-mail para o administrador
     const mailOptionsAdmin = {
       from: process.env.EMAIL_USER,
       to: 'agendamentos@claudinhocelulares.com.br',
@@ -62,6 +72,7 @@ export async function POST(request: Request) {
       `,
     };
 
+    // Enviar ambos os e-mails
     await Promise.all([
       transporter.sendMail(mailOptionsLead),
       transporter.sendMail(mailOptionsAdmin),

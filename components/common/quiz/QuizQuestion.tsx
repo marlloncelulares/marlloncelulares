@@ -11,7 +11,7 @@ interface Option {
 
 interface QuizStep {
   type: 'intro' | 'question' | 'form';
-  content?: React.ReactNode;
+  content?: React.ReactNode; // Tipo atualizado
   question?: string;
   options?: Option[];
 }
@@ -21,8 +21,6 @@ const Quiz: React.FC = () => {
   const [showProgressBar, setShowProgressBar] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', whatsapp: '' });
   const [answers, setAnswers] = useState<{ question: string; option: string }[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -87,8 +85,33 @@ const Quiz: React.FC = () => {
           <p className="text-gray-700 mb-6">
             Preencha seus dados abaixo para receber seu <strong>brinde exclusivo</strong>:
           </p>
-          {error && <p className="text-red-500 mb-4">{error}</p>}
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={async (e) => {
+              e.preventDefault();
+              try {
+                const response = await fetch('/api/quiz', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    name: formData.name,
+                    email: formData.email,
+                    whatsapp: formData.whatsapp,
+                    answers,
+                  }),
+                });
+                if (response.ok) {
+                  alert('Obrigado por participar! Verifique seu e-mail.');
+                  localStorage.removeItem('quizFormData');
+                  router.push('/note-13-pro');
+                } else {
+                  alert('Erro ao enviar os dados. Tente novamente mais tarde.');
+                }
+              } catch (error) {
+                console.error('Erro ao enviar os dados:', error);
+                alert('Erro ao enviar os dados. Tente novamente mais tarde.');
+              }
+            }}
+          >
             <input
               type="text"
               name="name"
@@ -110,7 +133,7 @@ const Quiz: React.FC = () => {
             <input
               type="tel"
               name="whatsapp"
-              placeholder="WhatsApp (ex.: 5538999999999)"
+              placeholder="WhatsApp"
               value={formData.whatsapp}
               onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
               className="w-full mb-4 p-2 border border-gray-300 rounded"
@@ -118,12 +141,9 @@ const Quiz: React.FC = () => {
             />
             <button
               type="submit"
-              className={`mt-6 w-full font-bold py-3 rounded-lg transition ${
-                isLoading ? 'bg-gray-500' : 'bg-dark-blue text-white hover:bg-blue-950'
-              }`}
-              disabled={isLoading}
+              className="mt-6 w-full bg-dark-blue text-white font-bold py-3 rounded-lg transition hover:bg-blue-950"
             >
-              {isLoading ? 'Enviando...' : 'Enviar'}
+              Enviar
             </button>
           </form>
         </div>
@@ -137,51 +157,6 @@ const Quiz: React.FC = () => {
       setAnswers((prevAnswers) => [...prevAnswers, { question: currentQuestion, option: selectedOption.label }]);
     }
     setStep(step + 1);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setIsLoading(true);
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const whatsappRegex = /^\d{10,14}$/;
-    if (!emailRegex.test(formData.email)) {
-      setError('E-mail inválido.');
-      setIsLoading(false);
-      return;
-    }
-    if (!whatsappRegex.test(formData.whatsapp)) {
-      setError('WhatsApp inválido. Use apenas números (ex.: 5538999999999).');
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const response = await fetch('/api/quiz', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          whatsapp: formData.whatsapp,
-          answers,
-        }),
-      });
-
-      if (response.ok) {
-        localStorage.removeItem('quizFormData');
-        router.push('/note-13-pro');
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Erro ao enviar os dados.');
-      }
-    } catch (error) {
-      console.error('Erro ao enviar os dados:', error);
-      setError('Erro ao enviar os dados. Tente novamente mais tarde.');
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const progressPercentage = ((step + 1) / steps.length) * 100;

@@ -1,8 +1,5 @@
 import nodemailer from 'nodemailer';
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {
@@ -11,28 +8,6 @@ export async function POST(request: Request) {
     if (!name || !email || !whatsapp || !answers) {
       return NextResponse.json({ message: 'Todos os campos são obrigatórios.' }, { status: 400 });
     }
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const whatsappRegex = /^\d{10,14}$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json({ message: 'E-mail inválido.' }, { status: 400 });
-    }
-    if (!whatsappRegex.test(whatsapp)) {
-      return NextResponse.json({ message: 'WhatsApp inválido. Use apenas números (ex.: 5538999999999).' }, { status: 400 });
-    }
-
-    const lead = await prisma.quizLead.create({
-      data: {
-        name,
-        email,
-        whatsapp,
-        answers: {
-          create: answers.map((answer: { question: string; option: string }) => ({
-            question: answer.question,
-            answer: answer.option,
-          })),
-        },
-      },
-    });
 
     const transporter = nodemailer.createTransport({
       host: 'smtp.titan.email',
@@ -42,13 +17,9 @@ export async function POST(request: Request) {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-      authMethod: 'LOGIN',
-      debug: true,
-      logger: true,
     });
 
-    await transporter.verify();
-
+    // Formatar respostas
     const formattedAnswers = answers
       .map(
         (answer: { question: string; option: string }) =>
@@ -56,6 +27,7 @@ export async function POST(request: Request) {
       )
       .join('');
 
+    // E-mail para o lead
     const mailOptionsLead = {
       from: process.env.EMAIL_USER,
       to: email,
@@ -65,13 +37,14 @@ export async function POST(request: Request) {
         <p>Obrigado por participar do nosso questionário de satisfação.</p>
         <h3>🎁 Seu brinde exclusivo está garantido!</h3>
         <p>Por favor, visite uma das nossas lojas para retirar seu brinde. Não se esqueça de mencionar que participou do questionário.</p>
-        <p>Atenciosamente,<br>Equipe Marllon Celulares</p>
+        <p>Atenciosamente,<br>Equipe Claudinho Celulares</p>
       `,
     };
 
+    // E-mail para o administrador
     const mailOptionsAdmin = {
       from: process.env.EMAIL_USER,
-      to: 'agendamentos@marlloncelulares.com.br',
+      to: 'agendamentos@claudinhocelulares.com.br',
       subject: 'Novo lead do questionário de satisfação! 🎉',
       html: `
         <h1>Detalhes do Lead:</h1>
@@ -86,25 +59,15 @@ export async function POST(request: Request) {
       `,
     };
 
+    // Enviar os e-mails
     await Promise.all([
       transporter.sendMail(mailOptionsLead),
       transporter.sendMail(mailOptionsAdmin),
     ]);
 
-    await fetch('/api/meta-events', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event_name: 'CompleteRegistration',
-        event_time: Math.floor(Date.now() / 1000),
-        user_data: { em: email, ph: whatsapp },
-        custom_data: { lead_name: name },
-      }),
-    });
-
-    return NextResponse.json({ message: 'E-mails enviados e lead registrado com sucesso!' }, { status: 200 });
+    return NextResponse.json({ message: 'E-mails enviados com sucesso!' }, { status: 200 });
   } catch (error) {
-    console.error('Erro ao processar o quiz:', error);
-    return NextResponse.json({ message: 'Erro ao processar o quiz.' }, { status: 500 });
+    console.error('Erro ao enviar os e-mails:', error);
+    return NextResponse.json({ message: 'Erro ao enviar os e-mails.' }, { status: 500 });
   }
 }
