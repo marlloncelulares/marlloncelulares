@@ -51,6 +51,8 @@ const Scheduler: React.FC = () => {
           },
         }),
       });
+
+      console.log(`[Meta] Evento ${eventName} enviado com sucesso!`);
     } catch (error) {
       console.error(`Erro ao enviar evento ${eventName}:`, error);
     }
@@ -74,7 +76,7 @@ const Scheduler: React.FC = () => {
 
       if (!response.ok) throw new Error('Erro ao enviar confirmação.');
 
-      await sendMetaEvent('Schedule'); // evento de agendamento
+      await sendMetaEvent('Schedule');
     } catch (error) {
       console.error('Erro ao enviar confirmação de agendamento:', error);
       alert('Erro ao confirmar o agendamento. Tente novamente mais tarde.');
@@ -106,7 +108,7 @@ const Scheduler: React.FC = () => {
           onSubmit={async (e) => {
             e.preventDefault();
             if (date && selectedTime) {
-              await sendMetaEvent('InitiateCheckout'); // evento ao clicar "Próximo"
+              await sendMetaEvent('InitiateCheckout');
               setStep(2);
             } else {
               alert('Por favor, selecione uma data e horário.');
