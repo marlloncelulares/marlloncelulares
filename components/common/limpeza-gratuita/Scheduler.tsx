@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import Calendar, { CalendarProps } from 'react-calendar';
+import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useRouter } from 'next/navigation';
+import { sha256 } from '@/utils/hash';
 
 const Scheduler: React.FC = () => {
   const [step, setStep] = useState(1);
@@ -15,32 +16,40 @@ const Scheduler: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleDateChange: CalendarProps['onChange'] = (value) => {
-    setDate(Array.isArray(value) ? value[0] : value);
+  const handleDateChange = (value: Date) => {
+    setDate(value);
   };
 
   const sendMetaEvent = async (eventName: string) => {
-    await fetch('/api/meta-events', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event_name: eventName,
-        event_time: Math.floor(Date.now() / 1000),
-        user_data: {
-          email,
-          phone: whatsapp,
-        },
-        custom_data: {
-          content_name: 'Limpeza Gratuita',
-          content_category: 'Serviço de Limpeza',
-          lead_name: name,
-          lead_email: email,
-          lead_whatsapp: whatsapp,
-          appointment_date: date?.toISOString().split('T')[0],
-          appointment_time: selectedTime,
-        },
-      }),
-    });
+    try {
+      const hashedEmail = await sha256(email);
+      const hashedPhone = await sha256(whatsapp);
+
+      await fetch('/api/meta-events', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          event_name: eventName,
+          event_time: Math.floor(Date.now() / 1000),
+          user_data: {
+            em: hashedEmail,
+            ph: hashedPhone,
+            client_user_agent: navigator.userAgent,
+          },
+          custom_data: {
+            content_name: 'Limpeza Gratuita',
+            content_category: 'Serviço de Limpeza',
+            lead_name: name,
+            lead_email: email,
+            lead_whatsapp: whatsapp,
+            appointment_date: date?.toISOString().split('T')[0],
+            appointment_time: selectedTime,
+          },
+        }),
+      });
+    } catch (error) {
+      console.error(`Erro ao enviar evento ${eventName}:`, error);
+    }
   };
 
   const sendScheduleConfirmation = async () => {
@@ -91,7 +100,15 @@ const Scheduler: React.FC = () => {
   return (
     <div className="bg-black flex flex-col items-center space-y-6 my-8 w-full px-4">
       {step === 1 && (
-        <form onSubmit={(e) => { e.preventDefault(); if (date && selectedTime) { setStep(2); sendMetaEvent('InitiateCheckout'); } }} className="flex flex-col items-center space-y-6">
+        <form onSubmit={async (e) => {
+          e.preventDefault();
+          if (date && selectedTime) {
+            await sendMetaEvent('InitiateCheckout');
+            setStep(2);
+          } else {
+            alert('Por favor, selecione uma data e horário.');
+          }
+        }} className="flex flex-col items-center space-y-6">
           <h2 className="text-white font-bold text-2xl md:text-3xl text-center mb-8">Selecione Data e Hora Aqui</h2>
           <div className="bg-[#333] p-10 rounded-lg shadow-lg grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
             <div className="w-full flex justify-center">
