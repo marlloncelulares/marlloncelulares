@@ -4,22 +4,7 @@ import React, { useState } from 'react';
 import Calendar, { CalendarProps } from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useRouter } from 'next/navigation';
-import { sha256 } from '@/utils/hash'; // 🔐 função de hash que você precisa criar
-
-// Definição dos parâmetros do Pixel
-interface FbqParams {
-  content_name: string;
-  content_category: string;
-  lead_name: string;
-  lead_email: string;
-  lead_whatsapp: string;
-  appointment_date: string | undefined;
-  appointment_time: string | null;
-}
-
-interface Fbq {
-  (event: string, action: string, params: FbqParams): void;
-}
+import { sha256 } from '@/utils/hash';
 
 const Scheduler: React.FC = () => {
   const [step, setStep] = useState(1);
@@ -39,24 +24,8 @@ const Scheduler: React.FC = () => {
     }
   };
 
-  const sendMetaEvent = async () => {
+  const sendMetaEvent = async (eventName: string) => {
     try {
-      // Pixel (cliente)
-      if (typeof window !== 'undefined' && 'fbq' in window) {
-        const fbq = (window as typeof window & { fbq: Fbq }).fbq;
-        fbq('track', 'Schedule', {
-          content_name: 'Limpeza Gratuita',
-          content_category: 'Serviço de Limpeza',
-          lead_name: name,
-          lead_email: email,
-          lead_whatsapp: whatsapp,
-          appointment_date: date?.toISOString().split('T')[0],
-          appointment_time: selectedTime,
-        });
-        console.log('Evento "Schedule" enviado para Pixel');
-      }
-
-      // API (server-side)
       const hashedEmail = await sha256(email);
       const hashedPhone = await sha256(whatsapp);
 
@@ -64,7 +33,7 @@ const Scheduler: React.FC = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          event_name: 'Schedule',
+          event_name: eventName,
           event_time: Math.floor(Date.now() / 1000),
           user_data: {
             em: hashedEmail,
@@ -83,7 +52,7 @@ const Scheduler: React.FC = () => {
         }),
       });
     } catch (error) {
-      console.error('Erro ao enviar evento para Meta Ads:', error);
+      console.error(`Erro ao enviar evento ${eventName}:`, error);
     }
   };
 
@@ -103,11 +72,9 @@ const Scheduler: React.FC = () => {
         body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        throw new Error('Erro ao enviar confirmação.');
-      }
+      if (!response.ok) throw new Error('Erro ao enviar confirmação.');
 
-      await sendMetaEvent(); // ✅ envia para Pixel + API com hash
+      await sendMetaEvent('Schedule'); // evento de agendamento
     } catch (error) {
       console.error('Erro ao enviar confirmação de agendamento:', error);
       alert('Erro ao confirmar o agendamento. Tente novamente mais tarde.');
@@ -136,9 +103,10 @@ const Scheduler: React.FC = () => {
     <div className="bg-black flex flex-col items-center space-y-6 my-8 w-full px-4">
       {step === 1 && (
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
             if (date && selectedTime) {
+              await sendMetaEvent('InitiateCheckout'); // evento ao clicar "Próximo"
               setStep(2);
             } else {
               alert('Por favor, selecione uma data e horário.');
