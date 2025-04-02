@@ -1,5 +1,4 @@
 // utils/hash.ts
-
 export async function sha256(text: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(text.trim().toLowerCase());
