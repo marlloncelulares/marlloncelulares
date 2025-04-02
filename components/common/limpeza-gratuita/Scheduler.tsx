@@ -4,20 +4,25 @@ import React, { useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { useRouter } from 'next/navigation';
-import { sha256 } from '@/utils/hash';
+import { sha256 } from '@/utils/hash'; // certifique-se que esse utilitário está criado
 
 const Scheduler: React.FC = () => {
   const [step, setStep] = useState(1);
   const [date, setDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [name, setName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [whatsapp, setWhatsapp] = useState<string>('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleDateChange = (value: Date) => {
-    setDate(value);
+  // ✅ CORREÇÃO: função aceita Date | Date[] | null
+  const handleDateChange = (value: Date | Date[] | null) => {
+    if (Array.isArray(value)) {
+      setDate(value[0]);
+    } else {
+      setDate(value);
+    }
   };
 
   const sendMetaEvent = async (eventName: string) => {
@@ -82,9 +87,7 @@ const Scheduler: React.FC = () => {
 
     if (date && selectedTime && name && email && whatsapp) {
       setIsLoading(true);
-
       await sendScheduleConfirmation();
-
       setIsLoading(false);
       router.push('/limpeza-gratuita/sucesso');
     } else {
@@ -112,13 +115,24 @@ const Scheduler: React.FC = () => {
           <h2 className="text-white font-bold text-2xl md:text-3xl text-center mb-8">Selecione Data e Hora Aqui</h2>
           <div className="bg-[#333] p-10 rounded-lg shadow-lg grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
             <div className="w-full flex justify-center">
-              <Calendar onChange={handleDateChange} value={date} locale="pt-BR" className="react-calendar" tileDisabled={({ date }) => date.getDay() === 0 || date.getDay() === 6} />
+              <Calendar
+                onChange={handleDateChange}
+                value={date}
+                locale="pt-BR"
+                className="react-calendar"
+                tileDisabled={({ date }) => date.getDay() === 0 || date.getDay() === 6}
+              />
             </div>
             <div className="flex flex-col items-center">
               <h3 className="text-white font-semibold text-lg mb-4">Escolha o horário</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 w-full">
                 {times.map((time) => (
-                  <button type="button" key={time} onClick={() => setSelectedTime(time)} className={`px-4 py-2 rounded ${selectedTime === time ? 'bg-yellow text-black font-bold' : 'bg-white text-black hover:bg-gray-200'}`}>
+                  <button
+                    type="button"
+                    key={time}
+                    onClick={() => setSelectedTime(time)}
+                    className={`px-4 py-2 rounded ${selectedTime === time ? 'bg-yellow text-black font-bold' : 'bg-white text-black hover:bg-gray-200'}`}
+                  >
                     {time}
                   </button>
                 ))}
