@@ -13,7 +13,8 @@ const ALLOWED_EVENTS = [
   'CompleteRegistration',
   'Contact',
   'FindLocation',
-  'Schedule',
+  'Schedule',        // Agendamento
+  'Confirmation',    // Confirmação de agendamento
 ];
 
 export async function POST(request: Request) {
@@ -41,14 +42,14 @@ export async function POST(request: Request) {
       );
     }
 
-    // Construir o payload do evento
+    // Adicionar informações para eventos de agendamento e confirmação
     const payload = {
       data: [
         {
           event_name,
-          event_time: event_time || Math.floor(Date.now() / 1000),
-          user_data: user_data || {}, // Ex.: hashed_email, hashed_phone
-          custom_data: custom_data || {}, // Ex.: value, currency, items
+          event_time: event_time || Math.floor(Date.now() / 1000), // Usar o timestamp atual se não fornecido
+          user_data: user_data || {},
+          custom_data: custom_data || {},
         },
       ],
     };
