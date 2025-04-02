@@ -6,8 +6,8 @@ import { sha256 } from '@/utils/hash';
 const SucessoPage = () => {
   useEffect(() => {
     const sendConfirmationEvent = async () => {
-      const email = 'email@cliente.com';
-      const whatsapp = '5538984184684';
+      const email = 'cliente@exemplo.com'; // ⚠️ substitua com dados reais se quiser
+      const whatsapp = '5538984184684';     // ⚠️ substitua com dados reais se quiser
 
       const hashedEmail = await sha256(email);
       const hashedPhone = await sha256(whatsapp);
@@ -30,6 +30,8 @@ const SucessoPage = () => {
           },
         }),
       });
+
+      console.log('[Meta] Evento "Confirmation" enviado com hash ✅');
     };
 
     sendConfirmationEvent();
@@ -39,10 +41,11 @@ const SucessoPage = () => {
     <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 py-16 text-center space-y-6">
       <h1 className="text-4xl font-bold text-yellow-500">Agendamento Confirmado ✅</h1>
       <p className="text-lg max-w-xl">
-        Obrigado por agendar com a <strong>Marllon Celulares</strong>. Se tiver dúvidas, fale conosco no WhatsApp.
+        Obrigado por agendar com a <strong>Marllon Celulares</strong>.
+        Se precisar, fale com a gente no WhatsApp.
       </p>
       <a
-        href="https://wa.me/5538984184684"
+        href="https://wa.me/5538984184684?text=Olá!%20Gostaria%20de%20confirmar%20detalhes%20do%20meu%20agendamento."
         target="_blank"
         rel="noopener noreferrer"
         className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded font-bold text-lg transition-all"
