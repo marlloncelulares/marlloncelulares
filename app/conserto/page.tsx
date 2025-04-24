@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image'; // Importar o componente Image
 import Scheduler from '@/components/common/limpeza-gratuita/Scheduler';
 import Footer from '@/components/common/limpeza-gratuita/Footer';
 import Logo from '@/components/common/limpeza-gratuita/Logo';
@@ -39,12 +40,20 @@ const ConsertoPage: React.FC = () => {
 
         {/* Prova Social */}
         <section className="max-w-3xl mx-auto my-6 text-center text-white px-4">
-          <p className="italic text-lg">"Troquei minha tela com o Marllon e ficou perfeita! Super rápido! - Ana C."</p>
+          <p className="italic text-lg">
+            {"Troquei minha tela com o Marllon e ficou perfeita! Super rápido! - Ana C."}
+          </p>
         </section>
 
         {/* Sobre */}
         <section className="max-w-3xl mx-auto my-6 text-center text-white px-4">
-          <img src="/images/logo.png" alt="Marllon" className="w-32 h-32 rounded-full mx-auto mb-4" />
+          <Image
+            src="/images/logo.png"
+            alt="Marllon"
+            width={128}
+            height={128}
+            className="rounded-full mx-auto mb-4"
+          />
           <p className="text-lg">
             Oi, eu sou o Marllon! Apaixonado por tecnologia, vou cuidar do seu celular como se fosse o meu. Vamos resolver isso juntos?
           </p>
