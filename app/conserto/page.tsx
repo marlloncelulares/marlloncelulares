@@ -2,66 +2,85 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Scheduler from '@/components/common/limpeza-gratuita/Scheduler';
-import Footer from '@/components/common/limpeza-gratuita/Footer';
-import Logo from '@/components/common/limpeza-gratuita/Logo';
+import Link from 'next/link';
 
 const ConsertoPage: React.FC = () => {
   return (
-    <div className="bg-black flex flex-col justify-between min-h-screen">
-      <div>
-        <div className="bg-yellow-500 text-xl text-black text-center py-4 font-bold">
-          As vagas pra essa semana já estão se esgotando...
-        </div>
-        <Logo />
-        <div className="text-center text-white py-6">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            Marllon Celulares - Conserto Rápido com o Mestre dos Celulares!
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex flex-col">
+      {/* Cabeçalho */}
+      <header className="text-center py-8">
+        <div className="inline-block">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-yellow-600">
+            Marllon Celulares
           </h1>
-          <p className="text-lg md:text-xl">
-            Tela quebrada, bateria fraca ou celular lento? Resolva tudo hoje com diagnóstico grátis e conserto no mesmo dia!
+          <p className="text-xl md:text-2xl font-semibold">
+            Conserto Rápido com o Mestre dos Celulares!
           </p>
         </div>
+      </header>
+
+      {/* Conteúdo Principal */}
+      <main className="flex-1 max-w-4xl mx-auto px-4">
+        <section className="text-center mb-12">
+          <p className="text-lg md:text-xl mb-6">
+            Tela quebrada, bateria fraca ou celular lento? Resolva tudo hoje com diagnóstico grátis e conserto no mesmo dia!
+          </p>
+        </section>
 
         {/* Benefícios */}
-        <section className="max-w-3xl mx-auto my-6 px-4">
-          <ul className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <li className="bg-yellow-500 text-black p-4 rounded-md text-center">
-              Conserto em até 1 hora 🕒
-            </li>
-            <li className="bg-yellow-500 text-black p-4 rounded-md text-center">
-              Garantia de 90 dias ✅
-            </li>
-            <li className="bg-yellow-500 text-black p-4 rounded-md text-center">
-              Peças de qualidade 🔧
-            </li>
-          </ul>
+        <section className="mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
+              <p className="text-yellow-400 text-2xl mb-2">🕒</p>
+              <p className="text-lg font-semibold">Conserto em até 1 hora</p>
+            </div>
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
+              <p className="text-yellow-400 text-2xl mb-2">✅</p>
+              <p className="text-lg font-semibold">Garantia de 90 dias</p>
+            </div>
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
+              <p className="text-yellow-400 text-2xl mb-2">🔧</p>
+              <p className="text-lg font-semibold">Peças de qualidade</p>
+            </div>
+          </div>
         </section>
 
         {/* Prova Social */}
-        <section className="max-w-3xl mx-auto my-6 text-center text-white px-4">
-          <p className="italic text-lg">
+        <section className="text-center mb-12">
+          <p className="italic text-lg bg-gray-800 p-4 rounded-lg shadow-md">
             {"Troquei minha tela com o Marllon e ficou perfeita! Super rápido! - Ana C."}
           </p>
         </section>
 
         {/* Sobre */}
-        <section className="max-w-3xl mx-auto my-6 text-center text-white px-4">
+        <section className="text-center mb-12">
           <Image
             src="/images/logo.png"
             alt="Marllon"
             width={128}
             height={128}
-            className="rounded-full mx-auto mb-4"
+            className="rounded-full mx-auto mb-4 border-4 border-yellow-400 shadow-lg"
           />
           <p className="text-lg">
             Oi, eu sou o Marllon! Apaixonado por tecnologia, vou cuidar do seu celular como se fosse o meu. Vamos resolver isso juntos?
           </p>
         </section>
 
-        <Scheduler />
-      </div>
-      <Footer />
+        {/* Agendamento */}
+        <section className="text-center mb-12">
+          <Link
+            href="/conserto/confirmado"
+            className="inline-block bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-4 px-8 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+          >
+            Selecione Data e Hora Aqui
+          </Link>
+        </section>
+      </main>
+
+      {/* Rodapé */}
+      <footer className="bg-gray-900 text-center py-6">
+        <p className="text-sm">© 2025 Marllon Celulares. Todos os direitos reservados.</p>
+      </footer>
     </div>
   );
 };
