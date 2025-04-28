@@ -18,6 +18,7 @@ const Scheduler: React.FC<SchedulerProps> = ({ service }) => {
   const [email, setEmail] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [problema, setProblema] = useState(''); // Campo para o problema (apenas para conserto)
+  const [modelo, setModelo] = useState(''); // Novo campo para modelo do celular (apenas para conserto)
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -54,6 +55,7 @@ const Scheduler: React.FC<SchedulerProps> = ({ service }) => {
             appointment_date: date?.toISOString().split('T')[0],
             appointment_time: selectedTime,
             problema: service === 'conserto' ? problema : undefined,
+            modelo: service === 'conserto' ? modelo : undefined,
           },
         }),
       });
@@ -73,6 +75,7 @@ const Scheduler: React.FC<SchedulerProps> = ({ service }) => {
         time: selectedTime,
         whatsapp,
         problema: service === 'conserto' ? problema : undefined,
+        modelo: service === 'conserto' ? modelo : undefined,
       };
 
       const apiEndpoint = service === 'conserto' ? '/api/send-conserto-confirmation' : '/api/send-schedule-confirmation';
@@ -95,7 +98,7 @@ const Scheduler: React.FC<SchedulerProps> = ({ service }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (date && selectedTime && name && email && whatsapp && (service !== 'conserto' || problema)) {
+    if (date && selectedTime && name && email && whatsapp && (service !== 'conserto' || (problema && modelo))) {
       setIsLoading(true);
       await sendScheduleConfirmation();
       setIsLoading(false);
@@ -108,6 +111,15 @@ const Scheduler: React.FC<SchedulerProps> = ({ service }) => {
   const times = [
     '07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
     '13:00', '14:00', '15:00', '16:00', '17:00', '18:00',
+  ];
+
+  const problemasOpcoes = [
+    'Tela quebrada',
+    'Bateria fraca',
+    'Celular lento',
+    'Botões não funcionam',
+    'Problemas de som',
+    'Outros',
   ];
 
   return (
@@ -135,7 +147,7 @@ const Scheduler: React.FC<SchedulerProps> = ({ service }) => {
                 onChange={handleDateChange}
                 value={date}
                 locale="pt-BR"
-                className="react-calendar"
+                className="react-calendar bg-black text-white border-gray-600"
                 tileDisabled={({ date }) => date.getDay() === 0 || date.getDay() === 6}
               />
             </div>
@@ -180,7 +192,7 @@ const Scheduler: React.FC<SchedulerProps> = ({ service }) => {
             placeholder="Nome"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full max-w-lg px-4 py-2 rounded border border-gray-600 focus:border-yellow-400 focus:outline-none"
+            className="w-full max-w-lg px-4 py-2 rounded border border-gray-600 bg-black text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none"
             required
           />
           <input
@@ -188,7 +200,7 @@ const Scheduler: React.FC<SchedulerProps> = ({ service }) => {
             placeholder="E-mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full max-w-lg px-4 py-2 rounded border border-gray-600 focus:border-yellow-400 focus:outline-none"
+            className="w-full max-w-lg px-4 py-2 rounded border border-gray-600 bg-black text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none"
             required
           />
           <input
@@ -196,17 +208,33 @@ const Scheduler: React.FC<SchedulerProps> = ({ service }) => {
             placeholder="WhatsApp"
             value={whatsapp}
             onChange={(e) => setWhatsapp(e.target.value)}
-            className="w-full max-w-lg px-4 py-2 rounded border border-gray-600 focus:border-yellow-400 focus:outline-none"
+            className="w-full max-w-lg px-4 py-2 rounded border border-gray-600 bg-black text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none"
             required
           />
           {service === 'conserto' && (
-            <textarea
-              placeholder="Descreva o problema do seu celular"
-              value={problema}
-              onChange={(e) => setProblema(e.target.value)}
-              className="w-full max-w-lg px-4 py-2 rounded border border-gray-600 focus:border-yellow-400 focus:outline-none"
-              required
-            />
+            <>
+              <select
+                value={problema}
+                onChange={(e) => setProblema(e.target.value)}
+                className="w-full max-w-lg px-4 py-2 rounded border border-gray-600 bg-black text-white focus:border-yellow-400 focus:outline-none"
+                required
+              >
+                <option value="" disabled>Selecione o problema</option>
+                {problemasOpcoes.map((opcao) => (
+                  <option key={opcao} value={opcao}>
+                    {opcao}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="text"
+                placeholder="Modelo do celular (ex.: iPhone 14)"
+                value={modelo}
+                onChange={(e) => setModelo(e.target.value)}
+                className="w-full max-w-lg px-4 py-2 rounded border border-gray-600 bg-black text-white placeholder-gray-400 focus:border-yellow-400 focus:outline-none"
+                required
+              />
+            </>
           )}
 
           <button
