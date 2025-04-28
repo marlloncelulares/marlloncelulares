@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       subject: 'Sua limpeza gratuita está confirmada! 🎉 Aqui está o que você precisa saber',
       html: `
         <h1>Olá, ${name}!</h1>
-        <p>Sua limpeza gratuita está confirmada.</p>
+        <p>Sua limpeza gratuita (externa) está confirmada.</p>
         <h3>🗓️ Detalhes do seu agendamento:</h3>
         <ul>
           <li><strong>Data:</strong> ${date}</li>
