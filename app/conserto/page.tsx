@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image'; // Importar o componente Image
+import Image from 'next/image';
 import Scheduler from '@/components/common/limpeza-gratuita/Scheduler';
 import Footer from '@/components/common/limpeza-gratuita/Footer';
 import Logo from '@/components/common/limpeza-gratuita/Logo';
