@@ -2,11 +2,11 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import Scheduler from '@/components/common/limpeza-gratuita/Scheduler';
 
 const ConsertoPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white flex flex-col">
+    <div className="min-h-screen bg-black text-white flex flex-col">
       {/* Cabeçalho */}
       <header className="text-center py-8">
         <div className="inline-block">
@@ -67,18 +67,11 @@ const ConsertoPage: React.FC = () => {
         </section>
 
         {/* Agendamento */}
-        <section className="text-center mb-12">
-          <Link
-            href="/conserto/confirmado"
-            className="inline-block bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-4 px-8 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-          >
-            Selecione Data e Hora Aqui
-          </Link>
-        </section>
+        <Scheduler service="conserto" />
       </main>
 
       {/* Rodapé */}
-      <footer className="bg-gray-900 text-center py-6">
+      <footer className="bg-black text-center py-6">
         <p className="text-sm">© 2025 Marllon Celulares. Todos os direitos reservados.</p>
       </footer>
     </div>
