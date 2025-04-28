@@ -30,16 +30,16 @@ const ConsertoPage: React.FC = () => {
         {/* Benefícios */}
         <section className="mb-12">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
-              <p className="text-yellow-400 text-2xl mb-2">🕒</p>
+            <div className="bg-[#333] p-6 rounded-lg shadow-lg">
+              <p className="text-white text-2xl mb-2">🕒</p>
               <p className="text-lg font-semibold">Conserto em até 1 hora</p>
             </div>
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
-              <p className="text-yellow-400 text-2xl mb-2">✅</p>
+            <div className="bg-[#333] p-6 rounded-lg shadow-lg">
+              <p className="text-white text-2xl mb-2">✅</p>
               <p className="text-lg font-semibold">Garantia de 90 dias</p>
             </div>
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 transform hover:-translate-y-1">
-              <p className="text-yellow-400 text-2xl mb-2">🔧</p>
+            <div className="bg-[#333] p-6 rounded-lg shadow-lg">
+              <p className="text-white text-2xl mb-2">🔧</p>
               <p className="text-lg font-semibold">Peças de qualidade</p>
             </div>
           </div>
@@ -47,7 +47,7 @@ const ConsertoPage: React.FC = () => {
 
         {/* Prova Social */}
         <section className="text-center mb-12">
-          <p className="italic text-lg bg-gray-800 p-4 rounded-lg shadow-md">
+          <p className="italic text-lg bg-[#333] p-4 rounded-lg shadow-md">
             {"Troquei minha tela com o Marllon e ficou perfeita! Super rápido! - Ana C."}
           </p>
         </section>
