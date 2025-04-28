@@ -2,10 +2,10 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Scheduler from '@/components/common/Scheduler';
+import Scheduler from '@/components/common/limpeza-gratuita/Scheduler';
 import Headline from '@/components/common/limpeza-gratuita/Headline';
 import VideoPlayer from '@/components/common/limpeza-gratuita/VideoPlayer';
-import Footer from '@/components/common/Footer';
+import Footer from '@/components/common/limpeza-gratuita/Footer';
 
 const LimpezaGratuitaPage: React.FC = () => {
   return (
