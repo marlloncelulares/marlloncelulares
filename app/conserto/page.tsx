@@ -61,7 +61,7 @@ const ConsertoPage: React.FC = () => {
             height={128}
             className="rounded-full mx-auto mb-4 border-4 border-yellow-400 shadow-lg"
           />
-          <p className="text-lg">
+          <p className="text-lg text-black">
             Oi, eu sou o Marllon! Apaixonado por tecnologia, vou cuidar do seu celular como se fosse o meu. Vamos resolver isso juntos?
           </p>
         </section>
