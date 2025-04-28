@@ -3,9 +3,9 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
-    const { name, email, date, time, whatsapp, problema } = await request.json();
+    const { name, email, date, time, whatsapp, problema, modelo } = await request.json();
 
-    if (!name || !email || !date || !time || !problema) {
+    if (!name || !email || !date || !time || !problema || !modelo) {
       return NextResponse.json({ message: 'Todos os campos são obrigatórios.' }, { status: 400 });
     }
 
@@ -29,6 +29,7 @@ export async function POST(request: Request) {
         <p>Seu conserto com o <strong>Mestre dos Celulares</strong> está agendado com sucesso! 🚀</p>
         <h3>🗓️ Detalhes do seu agendamento:</h3>
         <ul>
+          <li><strong>Modelo do Celular:</strong> ${modelo}</li>
           <li><strong>Problema:</strong> ${problema}</li>
           <li><strong>Data:</strong> ${date}</li>
           <li><strong>Horário:</strong> ${time}</li>
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
         <h3>Como se preparar para o conserto?</h3>
         <ul>
           <li>🔋 Certifique-se de que o celular está carregado ou traga o carregador.</li>
-          <li>📋 Faça backup dos seus dados importantes antes do conserto.</li>
+          <li>📋 Traga uma descrição detalhada do problema para agilizar o diagnóstico.</li>
           <li>📞 Traga o aparelho e qualquer acessório relevante para o diagnóstico.</li>
         </ul>
         <p>💡 Adicione ao calendário para não perder a data!</p>
@@ -59,6 +60,7 @@ export async function POST(request: Request) {
           <li><strong>Nome:</strong> ${name}</li>
           <li><strong>E-mail:</strong> ${email}</li>
           <li><strong>WhatsApp:</strong> ${whatsapp}</li>
+          <li><strong>Modelo do Celular:</strong> ${modelo}</li>
           <li><strong>Problema:</strong> ${problema}</li>
           <li><strong>Data:</strong> ${date}</li>
           <li><strong>Horário:</strong> ${time}</li>
