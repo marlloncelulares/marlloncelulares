@@ -6,13 +6,18 @@ import 'react-calendar/dist/Calendar.css';
 import { useRouter } from 'next/navigation';
 import { sha256 } from '@/utils/hash';
 
-const Scheduler: React.FC = () => {
+interface SchedulerProps {
+  service: 'conserto' | 'limpeza-gratuita';
+}
+
+const Scheduler: React.FC<SchedulerProps> = ({ service }) => {
   const [step, setStep] = useState(1);
   const [date, setDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
+  const [problema, setProblema] = useState(''); // Campo para o problema (apenas para conserto)
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -41,13 +46,14 @@ const Scheduler: React.FC = () => {
             client_user_agent: navigator.userAgent,
           },
           custom_data: {
-            content_name: 'Limpeza Gratuita',
-            content_category: 'Serviço de Limpeza',
+            content_name: service === 'conserto' ? 'Conserto de Celular' : 'Limpeza Gratuita',
+            content_category: service === 'conserto' ? 'Serviço de Conserto' : 'Serviço de Limpeza',
             lead_name: name,
             lead_email: email,
             lead_whatsapp: whatsapp,
             appointment_date: date?.toISOString().split('T')[0],
             appointment_time: selectedTime,
+            problema: service === 'conserto' ? problema : undefined,
           },
         }),
       });
@@ -66,9 +72,12 @@ const Scheduler: React.FC = () => {
         date: date?.toISOString().split('T')[0],
         time: selectedTime,
         whatsapp,
+        problema: service === 'conserto' ? problema : undefined,
       };
 
-      const response = await fetch('/api/send-schedule-confirmation', {
+      const apiEndpoint = service === 'conserto' ? '/api/send-conserto-confirmation' : '/api/send-schedule-confirmation';
+
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -86,11 +95,11 @@ const Scheduler: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (date && selectedTime && name && email && whatsapp) {
+    if (date && selectedTime && name && email && whatsapp && (service !== 'conserto' || problema)) {
       setIsLoading(true);
       await sendScheduleConfirmation();
       setIsLoading(false);
-      router.push('/limpeza-gratuita/sucesso');
+      router.push(service === 'conserto' ? '/conserto/confirmado' : '/limpeza-gratuita/sucesso');
     } else {
       alert('Por favor, preencha todos os campos.');
     }
@@ -141,7 +150,7 @@ const Scheduler: React.FC = () => {
                     onClick={() => setSelectedTime(time)}
                     className={`px-4 py-2 rounded transition-all ${
                       selectedTime === time
-                        ? 'bg-yellow text-black font-bold'
+                        ? 'bg-yellow-500 text-black font-bold'
                         : 'bg-white text-black hover:bg-gray-200'
                     }`}
                   >
@@ -154,7 +163,7 @@ const Scheduler: React.FC = () => {
 
           <button
             type="submit"
-            className="bg-yellow text-black font-semibold px-8 py-3 rounded transition-all hover:bg-yellow-600 w-full sm:w-auto"
+            className="bg-yellow-500 text-black font-semibold px-8 py-3 rounded transition-all hover:bg-yellow-600 w-full sm:w-auto"
           >
             Próximo
           </button>
@@ -171,7 +180,7 @@ const Scheduler: React.FC = () => {
             placeholder="Nome"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full max-w-lg px-4 py-2 rounded border"
+            className="w-full max-w-lg px-4 py-2 rounded border border-gray-600 focus:border-yellow-400 focus:outline-none"
             required
           />
           <input
@@ -179,7 +188,7 @@ const Scheduler: React.FC = () => {
             placeholder="E-mail"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full max-w-lg px-4 py-2 rounded border"
+            className="w-full max-w-lg px-4 py-2 rounded border border-gray-600 focus:border-yellow-400 focus:outline-none"
             required
           />
           <input
@@ -187,9 +196,18 @@ const Scheduler: React.FC = () => {
             placeholder="WhatsApp"
             value={whatsapp}
             onChange={(e) => setWhatsapp(e.target.value)}
-            className="w-full max-w-lg px-4 py-2 rounded border"
+            className="w-full max-w-lg px-4 py-2 rounded border border-gray-600 focus:border-yellow-400 focus:outline-none"
             required
           />
+          {service === 'conserto' && (
+            <textarea
+              placeholder="Descreva o problema do seu celular"
+              value={problema}
+              onChange={(e) => setProblema(e.target.value)}
+              className="w-full max-w-lg px-4 py-2 rounded border border-gray-600 focus:border-yellow-400 focus:outline-none"
+              required
+            />
+          )}
 
           <button
             type="submit"
