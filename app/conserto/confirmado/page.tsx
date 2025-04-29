@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { sha256 } from '@/utils/hash';
 
 const ConfirmadoPage: React.FC = () => {
   useEffect(() => {
