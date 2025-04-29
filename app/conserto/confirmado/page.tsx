@@ -7,7 +7,6 @@ const ConfirmadoPage: React.FC = () => {
   useEffect(() => {
     const sendConfirmationEvent = async () => {
       try {
-        const hash = await sha256(window.location.href);
         await fetch('/api/meta-events', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -23,7 +22,7 @@ const ConfirmadoPage: React.FC = () => {
             },
           }),
         });
-        console.log(`[Meta] Evento "Confirmation" enviado com hash ✅`);
+        console.log(`[Meta] Evento "Confirmation" enviado com sucesso ✅`);
       } catch (error) {
         console.error('Erro ao enviar evento Confirmation:', error);
       }
